@@ -5,7 +5,6 @@
 
 enum States
 {
-	ZERO,
 	STARTUP,
 	NEUTRAL,
 	DRIVE,
@@ -19,7 +18,6 @@ enum States
 enum Events
 {
 	NO_EVENT,
-	GLV_UP,
 	HV_UP,
 	DRIVE_UP,
 	NEUTRAL_UP,
@@ -42,7 +40,7 @@ void fatal_fault()
 
 int main()
 {
-	uint8_t state = ZERO;
+	uint8_t state = STARTUP;
 	uint16_t event = 0x00 | (1 << NO_EVENT);
 
 	hard_init();
@@ -55,9 +53,6 @@ int main()
 		// FSM
 		switch(state)
 		{
-			case ZERO:
-				if(event == GLV_UP) state = STARTUP;
-				break;
 			case STARTUP:
 				if(event == HV_UP) state = NEUTRAL;
 				break;
