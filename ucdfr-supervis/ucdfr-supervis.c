@@ -28,7 +28,7 @@ enum Events
 	ANALOG_FAULT,
 	SHUTDOWN_FAULT,
 	DATA_FAULT,
-	FAULT_REMEDIED
+	FAULTS_REMEDIED
 }; // enum Events
 
 
@@ -74,7 +74,7 @@ int main()
 				if(event == CHARGE_DOWN) state = NEUTRAL;
 				break;
 			case SOFT_FAULT:
-				if(event == FAULT_REMEDIED) state = DRIVE;
+				if(event == FAULTS_REMEDIED) state = DRIVE;
 				break;
 			case HARD_FAULT:
 				fatal_fault();
