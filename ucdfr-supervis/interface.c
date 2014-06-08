@@ -1,12 +1,13 @@
-//serial terminal interface
-
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <stdint.h>
-#include <util/delay.h>
-#include "usb_serial.h"
 #include "interface.h"
-#include "hardware.h"
+
+
+
+void interface_init()
+{
+	usb_init();
+} // interface_init()
+
+
 
 //send a string from the Teensy to PC
 void send_str(const char *s)

@@ -43,7 +43,7 @@ int main()
 {
 	uint8_t state = STARTUP;
 	uint16_t event = 0x00 | (1 << NO_EVENT);
-	usb_init();
+	interface_init();
 	hard_init();
 
 	for(;;)

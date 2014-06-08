@@ -646,7 +646,9 @@ void usb_serial_flush_output(void)
 // communication
 uint32_t usb_serial_get_baud(void)
 {
-	return *(uint32_t *)cdc_line_coding;
+	uint32_t *tmp = (uint32_t *)cdc_line_coding;
+	return *tmp;
+	//return *(uint32_t *)cdc_line_coding;
 }
 uint8_t usb_serial_get_stopbits(void)
 {
