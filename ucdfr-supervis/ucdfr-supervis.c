@@ -24,10 +24,9 @@ enum Events
 	NEUTRAL_UP,
 	CHARGE_UP,
 	CHARGE_DOWN,
-	ANALOG_FAULT,
-	SHUTDOWN_FAULT,
-	DATA_FAULT,
-	FAULTS_REMEDIED
+	SOFT_FAULT_SIG,
+	SOFT_FAULT_REMEDIED,
+	HARD_FAULT_SIG
 }; // enum Events
 
 
@@ -43,8 +42,8 @@ int main()
 {
 	uint8_t state = STARTUP;
 	uint16_t event = 0x00 | (1 << NO_EVENT);
-	interface_init();
-	hard_init();
+	//interface_init();	// USB interface
+	hard_init();	// initialize hardware
 
 	for(;;)
 	{
@@ -64,14 +63,13 @@ int main()
 				break;
 			case DRIVE:
 				if(event == NEUTRAL || event == CHARGE_UP) state = NEUTRAL;
-				if(event == ANALOG_FAULT) state = SOFT_FAULT;
-				if(event == SHUTDOWN_FAULT || event == DATA_FAULT) state = HARD_FAULT;
+				if(event == SOFT_FAULT_SIG) state = SOFT_FAULT;
 				break;
 			case CHARGING:
 				if(event == CHARGE_DOWN) state = NEUTRAL;
 				break;
 			case SOFT_FAULT:
-				if(event == FAULTS_REMEDIED) state = DRIVE;
+				if(event == SOFT_FAULT_REMEDIED) state = DRIVE;
 				break;
 			case HARD_FAULT:
 				fatal_fault();
@@ -80,6 +78,8 @@ int main()
 				fatal_fault();
 				break;
 		}; // switch state
+
+		if(event == HARD_FAULT_SIG) state = HARD_FAULT;
 	} // main loop
 
 	return 0;
