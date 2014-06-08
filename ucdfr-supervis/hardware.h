@@ -3,6 +3,29 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
+
+#include "state_event.h"
+
+#define F_CPU 16000000UL // 16 MHz
+#define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
+
+#define BRAKE_FIFTEEN_PERCENT 150
+#define PEDAL2_MIN_MARGIN 30
+#define PEDAL2_MAX_MARGIN 1000
+
+// Linear relationship to express pedal2 in terms of pedal1 measurements
+#define PEDAL_INTERCEPT 8
+#define PEDAL_SLOPE 8
+
+#define PEDAL1_TEN_PERCENT 100
+#define PEDAL1_TWENTYFIVE_PERCENT 250
+
+#define BRAKE_MIN_MARGIN 100
+
+#define THRTTL_SLOPE 8
+#define THRTTL_INTERCEPT 8
+
 
 /* Port A
 A1	In	HV request
@@ -50,7 +73,7 @@ E7	In	Powerstage BPS Error
 
 /* Port F
 F0	In	GLV Sys Voltage
-F1	In	DC Link Boltage
+F1	In	DC Link Voltage
 F2	In	Brake Sensor
 F3	In	Traction Sys Current
 F4	In	Throttle to Ctrlr 1
@@ -60,9 +83,18 @@ F7	In	Throttle Sensor 2
 */
 
 
+
 void hard_init();
 unsigned int analog_read(uint8_t f_pin);
 void get_inputs(uint16_t *events);
-void put_outputs();
+
+void action_startup();
+void action_neutral();
+void action_charging();
+void action_drive();
+void action_soft_fault();
+void action_hard_fault();
+
+void reset_drive_sound();
 
 #endif

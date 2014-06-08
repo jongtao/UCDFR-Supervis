@@ -1,9 +1,10 @@
 #include <stdint.h>
 #include "hardware.h"
 #include "interface.h"
+#include "state_event.h"
 
 
-
+/*
 enum States
 {
 	STARTUP,
@@ -18,7 +19,6 @@ enum States
 
 enum Events
 {
-	NO_EVENT,
 	HV_UP,
 	DRIVE_UP,
 	NEUTRAL_UP,
@@ -28,7 +28,7 @@ enum Events
 	SOFT_FAULT_REMEDIED,
 	HARD_FAULT_SIG
 }; // enum Events
-
+*/
 
 
 void fatal_fault()
@@ -41,13 +41,13 @@ void fatal_fault()
 int main()
 {
 	uint8_t state = STARTUP;
-	uint16_t event = 0x00 | (1 << NO_EVENT);
+	uint16_t event = 0x00;
 	//interface_init();	// USB interface
 	hard_init();	// initialize hardware
 
 	for(;;)
 	{
-		event = 0x00 | (1 << NO_EVENT);
+		event = 0x00; // wipe events
 		get_inputs(&event);
 		usb_terminal(&event, &state);
 
@@ -55,24 +55,31 @@ int main()
 		switch(state)
 		{
 			case STARTUP:
-				if(event == HV_UP) state = NEUTRAL;
+				action_startup();
+				if(event&(1<<HV_UP)) state = NEUTRAL;
 				break;
 			case NEUTRAL:
-				if(event == DRIVE_UP) state = DRIVE;
-				if(event == CHARGE_UP) state = CHARGING;
+				action_neutral();
+				if(event&(1<<DRIVE_UP)) state = DRIVE;
+				if(event&(1<<CHARGE_UP)) state = CHARGING;
 				break;
 			case DRIVE:
-				if(event == NEUTRAL || event == CHARGE_UP) state = NEUTRAL;
-				if(event == SOFT_FAULT_SIG) state = SOFT_FAULT;
+				action_drive();
+				if(event&(1<<NEUTRAL) || event&(1<<CHARGE_UP)) state = NEUTRAL;
+				if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
+				if(state != DRIVE) reset_drive_sound(); 
 				break;
 			case CHARGING:
-				if(event == CHARGE_DOWN) state = NEUTRAL;
+				action_drive();
+				if(event&(1<<CHARGE_DOWN)) state = NEUTRAL;
 				break;
 			case SOFT_FAULT:
-				if(event == SOFT_FAULT_REMEDIED) state = DRIVE;
+				action_soft_fault();
+				if(event&(1<<SOFT_FAULT_REMEDIED)) state = DRIVE;
 				break;
 			case HARD_FAULT:
-				fatal_fault();
+				action_hard_fault();
+				for(;;);	// trap fault
 				break;
 			default: // INVALID STATE
 				fatal_fault();
@@ -82,5 +89,6 @@ int main()
 		if(event == HARD_FAULT_SIG) state = HARD_FAULT;
 	} // main loop
 
+	fatal_fault();
 	return 0;
 } // main()
