@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "hardware.h"
+#include "interface.h"
 
 
 
@@ -42,13 +43,14 @@ int main()
 {
 	uint8_t state = STARTUP;
 	uint16_t event = 0x00 | (1 << NO_EVENT);
-
+	usb_init();
 	hard_init();
 
 	for(;;)
 	{
 		event = 0x00 | (1 << NO_EVENT);
 		get_inputs(&event);
+		usb_terminal(&event, &state);
 
 		// FSM
 		switch(state)

@@ -42,6 +42,5 @@ void get_inputs(uint16_t *events)
 	PINC&(1<<1);
 	PINC&(1<<2);
 	PINC&(1<<3);
-
-	*/
+*/
 } // get_inputs()

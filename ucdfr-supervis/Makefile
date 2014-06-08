@@ -9,7 +9,7 @@ MMCU_CODE=usb1286
 CFLAGS=$(OPTIMIZE) $(WARN) $(OPTIONS) -mmcu=$(MMCU)
 
 NAME=ucdfr-supervis
-OBJECTS=$(NAME).o hardware.o
+OBJECTS=$(NAME).o hardware.o interface.o
 
 .PHONY: all upload cleanupload cleanmake clean
 
