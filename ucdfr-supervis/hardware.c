@@ -57,29 +57,33 @@ uint32_t analog_vcc()
 	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
 	vcc_value = ADCW;
 	vcc_value = 1125300 / vcc_value; // (1100mV)(1023)/x to find Vcc in mV
-	return vcc_value;
+	return vcc_value;	// Return VCC in mV
 } // analog_vcc()
 
 
 
-uint32_t analog_read(uint8_t f_pin)
+uint32_t analog_read(uint32_t *vcc, uint8_t f_pin)
 {
+	uint32_t f_value = 0;
 	// Measure
 	ADMUX = (1<<REFS0) | f_pin;	// MUX to f_pin. Compare voltage with AVCC
 	ADCSRA |= (1<<ADSC); 				// begin conversion
 	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
-	return ADCW;								// Read it. 10 bit precision
+	f_value = ADCW;						// Read it. 10 bit precision
+	f_value = (*vcc * f_value) / 1023; // correct vcc reference
+	return f_value;			// return read value in millivolts
 } // analog_read()
 
 
 
 void get_inputs(uint16_t *events)
 {
-	unsigned int brake_value = analog_read(2);
-	unsigned int pedal1_value = analog_read(6);
-	unsigned int pedal2_value = analog_read(7);
-	unsigned int controller_throttle1 = analog_read(4);
-	unsigned int controller_throttle2 = analog_read(5);
+	uint32_t vcc = analog_vcc();
+	uint32_t brake_value = analog_read(&vcc, 2);
+	uint32_t pedal1_value = analog_read(&vcc, 6);
+	uint32_t pedal2_value = analog_read(&vcc, 7);
+	uint32_t controller_throttle1 = analog_read(&vcc, 4);
+	uint32_t controller_throttle2 = analog_read(&vcc, 5);
 
 	int pedal_difference = 0;
 	int throttle1_transform =

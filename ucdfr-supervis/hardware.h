@@ -87,7 +87,7 @@ F7	In	Throttle Sensor 2
 
 void hard_init();
 uint32_t analog_vcc();
-uint32_t analog_read(uint8_t f_pin);
+uint32_t analog_read(uint32_t *vcc, uint8_t f_pin);
 void get_inputs(uint16_t *events);
 
 void action_startup();
