@@ -47,8 +47,24 @@ void hard_init()
 
 
 
-unsigned int analog_read(uint8_t f_pin)
+uint32_t analog_vcc()
 {
+	uint32_t vcc_value = 0;
+	// Calibrate
+	ADMUX = (1<<REFS0) | 0x0E;	// comapare vcc against MUX 1110 1.1V
+	_delay_ms(2); // VCC to settle?
+	ADCSRA |= (1<<ADSC); 				// begin conversion
+	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
+	vcc_value = ADCW;
+	vcc_value = 1125300 / vcc_value; // (1100mV)(1023)/x to find Vcc in mV
+	return vcc_value;
+} // analog_vcc()
+
+
+
+uint32_t analog_read(uint8_t f_pin)
+{
+	// Measure
 	ADMUX = (1<<REFS0) | f_pin;	// MUX to f_pin. Compare voltage with AVCC
 	ADCSRA |= (1<<ADSC); 				// begin conversion
 	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen

@@ -49,7 +49,7 @@ int main()
 	{
 		event = 0x00; // wipe events
 		get_inputs(&event);
-		usb_terminal(&event, &state);
+		//usb_terminal(&event, &state);
 
 		// FSM
 		switch(state)

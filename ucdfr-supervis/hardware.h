@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "state_event.h"
 
@@ -85,7 +86,8 @@ F7	In	Throttle Sensor 2
 
 
 void hard_init();
-unsigned int analog_read(uint8_t f_pin);
+uint32_t analog_vcc();
+uint32_t analog_read(uint8_t f_pin);
 void get_inputs(uint16_t *events);
 
 void action_startup();
