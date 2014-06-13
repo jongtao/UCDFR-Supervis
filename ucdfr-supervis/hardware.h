@@ -12,10 +12,7 @@
 #define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
 
 #define BRAKE_FIFTEEN_PERCENT 150
-#define PEDAL2_MIN_MARGIN 30
-#define PEDAL2_MAX_MARGIN 1000
 
-// Linear relationship to express pedal2 in terms of pedal1 measurements
 #define PEDAL_RATIO_NOMINATOR 1
 #define PEDAL_RATIO_DENOMINATOR 1
 
@@ -24,6 +21,7 @@
 
 #define BRAKE_MIN_MARGIN 100
 
+// Express controller's throttle as pedal1 travel
 #define THRTTL_SLOPE 8
 #define THRTTL_INTERCEPT 8
 
@@ -92,7 +90,7 @@ B		Neutral
 G		Drive
 GB	Charging
 R		Hard Fault
-RB	
+RB	Fatal	
 RG	Soft Fault
 RGB	Startup
 */
@@ -110,6 +108,7 @@ void action_charging();
 void action_drive();
 void action_soft_fault();
 void action_hard_fault();
+void action_fatal();
 
 void reset_drive_sound();
 

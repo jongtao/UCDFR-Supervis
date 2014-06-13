@@ -211,6 +211,15 @@ void action_hard_fault()
 
 
 
+void action_fatal()
+{
+	PORTC |= (1<<4);	// R
+	PORTC &= ~(1<<5);	// !G
+	PORTC |= (1<<6);	// B
+} // action_fatal()
+
+
+
 void reset_drive_sound()
 {
 	buzz_now = 0;

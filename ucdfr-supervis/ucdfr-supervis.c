@@ -33,7 +33,8 @@ enum Events
 
 void fatal_fault()
 {
-	for(;;);
+	for(;;)
+		action_fatal();
 } // fatal_fault()
 
 
