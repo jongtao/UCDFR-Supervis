@@ -16,8 +16,8 @@
 #define PEDAL2_MAX_MARGIN 1000
 
 // Linear relationship to express pedal2 in terms of pedal1 measurements
-#define PEDAL_INTERCEPT 8
-#define PEDAL_SLOPE 8
+#define PEDAL_RATIO_NOMINATOR 1
+#define PEDAL_RATIO_DENOMINATOR 1
 
 #define PEDAL1_TEN_PERCENT 100
 #define PEDAL1_TWENTYFIVE_PERCENT 250

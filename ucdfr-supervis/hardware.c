@@ -41,8 +41,6 @@ void hard_init()
 	TCCR1B |= (1 << WGM12) | (1 << CS11); // Timer Prescale 8
 	OCR1A = CTC_COUNT;	// Timer to CTC mode
 	TIMSK1 |= (1 << OCIE1A); // 1 MS
-
-
 } // inputs_init()
 
 
@@ -108,15 +106,13 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<CHARGE_DOWN);
 
 	// SOFT_FAULT_SIG
-	if(pedal2_value > PEDAL2_MIN_MARGIN && pedal2_value < PEDAL2_MAX_MARGIN)
-	{
-		pedal_difference =
-			pedal1_value - (PEDAL_SLOPE * pedal2_value + PEDAL_INTERCEPT);
+	pedal_difference =
+		pedal1_value -
+		(pedal2_value * PEDAL_RATIO_NOMINATOR) / PEDAL_RATIO_DENOMINATOR;
 
-		if(pedal_difference < -PEDAL1_TEN_PERCENT ||
-			pedal_difference > PEDAL1_TEN_PERCENT)
-			*events |= (1<<SOFT_FAULT_SIG);
-	} // Pedal sensor difference
+	if(pedal_difference < -PEDAL1_TEN_PERCENT ||
+		pedal_difference > PEDAL1_TEN_PERCENT)
+		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
 	
 	if(brake_value > BRAKE_MIN_MARGIN && pedal1_value > PEDAL1_TWENTYFIVE_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal and brake
