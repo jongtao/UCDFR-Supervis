@@ -136,6 +136,8 @@ void action_startup()
 	PORTD |= (1<<1);	// ON Dash/TQV
 	PORTB |= (1<<1);	// ON PEE Power
 	PORTB |= (1<<2);	// ON ACUES POWER
+
+	PORTC |= (1<<4) | (1<<5) | (1<<6);	// RGB
 } // action_startup()
 
 
@@ -147,6 +149,10 @@ void action_neutral()
 	PORTB |= (1<<6);	// ON AIR 2
 	PORTB |= (1<<4);	// ON Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
+
+	PORTC &= ~(1<<4);	// !R
+	PORTC &= ~(1<<5);	// !G
+	PORTC |= (1<<6);	// B
 } // action_neutral()
 
 
@@ -155,6 +161,10 @@ void action_charging()
 {
 	PORTB |= (1<<7);	// ON Charge Enable
 	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
+
+	PORTC &= ~(1<<4);	// !R
+	PORTC |= (1<<5);	// G
+	PORTC |= (1<<6);	// B
 } // action_charging()
 
 
@@ -166,6 +176,10 @@ void action_drive()
 	PORTB &= ~(1<<7);	// OFF Charge Enable
 	PORTB |= (1<<4);	// ON Keyswitch Enable
 	PORTB |= (1<<3);	// ON Drive Enable
+
+	PORTC &= ~(1<<4);	// !R
+	PORTC |= (1<<5);	// G
+	PORTC &= ~(1<<6);	// !B
 } // action_drive()
 
 
@@ -173,6 +187,10 @@ void action_drive()
 void action_soft_fault()
 {
 	PORTB &= ~(1<<3);	// OFF Drive Enable
+
+	PORTC |= (1<<4);	// R
+	PORTC |= (1<<5);	// G
+	PORTC &= ~(1<<6);	// !B
 } // action_soft_fault()
 
 
@@ -185,6 +203,10 @@ void action_hard_fault()
 	PORTB &= ~(1<<6);	// OFF AIR 2
 	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
+
+	PORTC |= (1<<4);	// R
+	PORTC &= ~(1<<5);	// !G
+	PORTC &= ~(1<<6);	// !B
 } // action_hard_fault()
 
 

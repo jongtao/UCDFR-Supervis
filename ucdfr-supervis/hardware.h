@@ -83,6 +83,20 @@ F6	In	Throttle Sensor 1
 F7	In	Throttle Sensor 2
 */
 
+/* State Color
+Pin 4 R
+Pin 5 G
+Pin 6 B
+
+B		Neutral
+G		Drive
+GB	Charging
+R		Hard Fault
+RB	
+RG	Soft Fault
+RGB	Startup
+*/
+
 
 
 void hard_init();
