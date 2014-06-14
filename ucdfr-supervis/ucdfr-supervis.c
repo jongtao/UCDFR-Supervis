@@ -53,6 +53,8 @@ int main()
 		//usb_terminal(&event, &state);
 
 		// FSM
+		if(event&(1<<HARD_FAULT_SIG)) state = HARD_FAULT;
+
 		switch(state)
 		{
 			case STARTUP:
@@ -66,12 +68,12 @@ int main()
 				break;
 			case DRIVE:
 				action_drive();
-				if(event&(1<<NEUTRAL) || event&(1<<CHARGE_UP)) state = NEUTRAL;
-				if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
+				if(event&(1<<NEUTRAL_UP) || event&(1<<CHARGE_UP)) state = NEUTRAL;
+				//if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
 				if(state != DRIVE) reset_drive_sound(); 
 				break;
 			case CHARGING:
-				action_drive();
+				action_charging();
 				if(event&(1<<CHARGE_DOWN)) state = NEUTRAL;
 				break;
 			case SOFT_FAULT:
@@ -86,8 +88,6 @@ int main()
 				fatal_fault();
 				break;
 		}; // switch state
-
-		if(event == HARD_FAULT_SIG) state = HARD_FAULT;
 	} // main loop
 
 	fatal_fault();

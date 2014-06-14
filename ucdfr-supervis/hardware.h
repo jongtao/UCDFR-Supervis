@@ -12,28 +12,28 @@
 #define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
 
 #define LED_MASK 0x8F	// masks PORTC for leds
-#define BUZZER_MAX 2000	// two seconds
-#define BUZZER_TRIG 100 // beep 10 times
+#define BUZZER_MAX 1500	// beep duration
+#define BUZZER_TRIG 50	// toggle beep every x ms
 
-#define BRAKE_FIFTEEN_PERCENT 150
+#define BRAKE_FIFTEEN_PERCENT 750
 
 #define PEDAL_RATIO_NOMINATOR 1
 #define PEDAL_RATIO_DENOMINATOR 1
 
-#define PEDAL1_TEN_PERCENT 100
-#define PEDAL1_TWENTYFIVE_PERCENT 250
+#define PEDAL1_TEN_PERCENT 500
+#define PEDAL1_TWENTYFIVE_PERCENT 1250
 
 #define BRAKE_MIN_MARGIN 100
 
 // Express controller's throttle as pedal1 travel
-#define THRTTL_SLOPE 8
-#define THRTTL_INTERCEPT 8
+#define THRTTL_SLOPE 1
+#define THRTTL_INTERCEPT 0
 
 
 /* Port A
-A1	In	HV request
-A2	In	Drive request
-A3	In	Neutral request
+A1	In	HV request (Active Low)
+A2	In	Drive request (Active Low)
+A3	In	Neutral request (Active Low)
 */
 
 /* Port B
@@ -41,16 +41,16 @@ B1	Out	PEE Power
 B2	Out	ACUES Power
 B3	Out	Drive Enable
 B4	Out	Keyswitch Enable
-B5	Out	AIR 1
-B6	Out	AIR 2
+B5	Out	AIR 2
+B6	Out	AIR 1
 B7	Out	Charger Enable
 */
 
 /* Port C
-C0	In	Left Estop
-C1	In	Brake Overtravel
-C2	In	Interlock Loop
-C3	In	Inertia Switch
+C0	In	Left Estop (Active Low)
+C1	In	Brake Overtravel (Active Low)
+C2	In	Interlock Loop (Active Low)
+C3	In	Inertia Switch (Active Low)
 C4	Out	Red LED
 C5	Out	Green LED
 C6	Out	Blue LED
@@ -62,23 +62,23 @@ D1	Out	Dash/TQV
 D2	Out	Reserved 1 (DISABLED)
 D3	Out Reserved 2 (DISABLED)
 D4	In	Charger Detect
-D5	In	Inv. 1 Contact Request
-D6	In	Inv. 2 Contact Request
-D7	In	Master Switch
+D5	In	Inv. 1 Contact Request (Unused)
+D6	In	Inv. 2 Contact Request (Unused)
+D7	In	Master Switch (Active Low)
 */
 
 /* Port E
-E0	In	Cockpit Estop
-E1	In	Right Estop
+E0	In	Cockpit Estop (Active Low)
+E1	In	Right Estop (Active Low)
 E6	In	Powerstage IMD Error
 E7	In	Powerstage BPS Error
 */
 
 /* Port F
-F0	In	GLV Sys Voltage
-F1	In	DC Link Voltage
+F0	In	GLV Sys Voltage (Unused)
+F1	In	DC Link Voltage (Unused)
 F2	In	Brake Sensor
-F3	In	Traction Sys Current
+F3	In	Traction Sys Current (Unused)
 F4	In	Throttle to Ctrlr 1
 F5	In	Throttle to Ctrlr 2
 F6	In	Throttle Sensor 1

@@ -2,7 +2,7 @@
 
 
 volatile uint8_t buzz_now = 0;
-volatile uint16_t buzzer_time = 0;
+volatile uint16_t buzzer_time = BUZZER_MAX;
 
 
 
@@ -29,32 +29,37 @@ void hard_init()
 
 	DDRA = (0x00);	// A1-A3 In
 	DDRB = (0xFE);	// B1-B7 Out
-	DDRC = (0x30);	// C0-C3 In, C4-C6 Out
+	DDRC = (0x70);	// C0-C3 In, C4-C6 Out
 	DDRD = (0x0F);	// D0-D3 Out, D4-D7 In
 	DDRE = (0x00);	// E0-E7 In
 	DDRF = (0x00);	// F0-F7 In
 
-	PORTF = (0xFF);	// Enable Pullup on F0-F7
+	PORTA = (0x0E);	// Pullup on A1-A3
+	PORTC = (0x0F);	// Pullup on C0-C3
+	PORTC = (0x80);	// Pullup on D7
+	PORTE	= (0x03);	// Pullup on E0-E1
+	PORTF = (0xFF);	// Pullup on F0-F7
 
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0); // Prepare ADC
 	ADCSRB = 0x80;	// "High Speed" ADC
 
 	TCCR1B |= (1 << WGM12) | (1 << CS11); // Timer Prescale 8
-	OCR1A = CTC_COUNT;	// Timer to CTC mode
-	TIMSK1 |= (1 << OCIE1A); // 1 ms
+	OCR1A = CTC_COUNT;										// Timer to CTC mode
+	TIMSK1 |= (1 << OCIE1A);							// 1 ms
+	sei();																// Enable Interrupts
 } // inputs_init()
 
 
 
 uint32_t analog_vcc()
 {
-	ADMUX = (1<<REFS0) | 0x0E;	// comapare vcc against MUX 1110 1.1V
-	_delay_ms(2);								// VCC to settle
-	ADCSRA |= (1<<ADSC); 				// begin conversion
-	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
+	ADMUX = (1<<REFS0) | 0x0E;				// comapare vcc against MUX 1110 1.1V
+	_delay_ms(2);											// VCC to settle
+	ADCSRA |= (1<<ADSC); 							// begin conversion
+	while(ADCSRA & (1<<ADSC)); 				// wait for the conversion to happen
 	uint32_t vcc_value = ADCW;
-	vcc_value = 1125300 / vcc_value; // (1100mV)(1023)/x to find Vcc in mV
-	return vcc_value;						// Return VCC in mV
+	vcc_value = 1125300 / vcc_value;	// (1100mV)(1023)/x to find Vcc in mV
+	return vcc_value;									// Return VCC in mV
 } // analog_vcc()
 
 
@@ -91,12 +96,16 @@ void get_inputs(uint16_t *events)
 		THRTTL_SLOPE * controller_throttle2 + THRTTL_INTERCEPT;
 
 	// HV_UP
-	if(PINA&(1<<1))
-		*events |= (1<<NEUTRAL_UP);
+	if(!(PINA&(1<<1)))
+		*events |= (1<<HV_UP);
 
 	// DRIVE_UP
-	if(PINA&(1<<2) || brake_value > BRAKE_FIFTEEN_PERCENT)
+	if(!(PINA&(1<<2)))//&& brake_value > BRAKE_FIFTEEN_PERCENT)
 		*events |= (1<<DRIVE_UP);
+
+	// NEUTRAL_UP
+	if(!(PINA&(1<<3)))
+		*events |= (1<<NEUTRAL_UP);
 
 	// CHARGE_UP
 	if(PIND&(1<<4))
@@ -122,7 +131,13 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<SOFT_FAULT_REMEDIED);
 
 	// HARD_FAULT_SIG
-	if(!(PIND&(1<<7) || PINE&(1<<0) || PINE&(1<<1) || PINE&(1<<6) || PINE&(1<<7)))
+	uint8_t portc_triggers =
+		!(PINC&(1<<0) && PINC&(1<<1) && PINC&(1<<2) && PINC&(1<<3));
+	uint8_t portd_triggers = !(PIND&(1<<7));
+	uint8_t porte_triggers =
+		!(PINE&(1<<0)) || !(PINE&(1<<1)) || PINE&(1<<6) || PINE&(1<<7);
+
+	if(portc_triggers || portd_triggers || porte_triggers)
 		*events |= (1<<HARD_FAULT_SIG);
 } // get_inputs()
 
@@ -141,8 +156,8 @@ void action_startup()
 void action_neutral()
 {
 	PORTB &= ~(1<<7);	// OFF Charge Enable
-	PORTB |= (1<<5);	// ON AIR 1
-	PORTB |= (1<<6);	// ON AIR 2
+	PORTB |= (1<<5);	// ON AIR 2
+	PORTB |= (1<<6);	// ON AIR 1
 	PORTB |= (1<<4);	// ON Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
 	set_led(BLUE);
@@ -185,6 +200,8 @@ void action_hard_fault()
 	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
 	set_led(RED);
+
+	for(;;); // HOLD PROGRAM
 } // action_hard_fault()
 
 
