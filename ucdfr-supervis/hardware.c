@@ -40,36 +40,32 @@ void hard_init()
 
 	TCCR1B |= (1 << WGM12) | (1 << CS11); // Timer Prescale 8
 	OCR1A = CTC_COUNT;	// Timer to CTC mode
-	TIMSK1 |= (1 << OCIE1A); // 1 MS
+	TIMSK1 |= (1 << OCIE1A); // 1 ms
 } // inputs_init()
 
 
 
 uint32_t analog_vcc()
 {
-	uint32_t vcc_value = 0;
-	// Calibrate
 	ADMUX = (1<<REFS0) | 0x0E;	// comapare vcc against MUX 1110 1.1V
-	_delay_ms(2); // VCC to settle?
+	_delay_ms(2);								// VCC to settle
 	ADCSRA |= (1<<ADSC); 				// begin conversion
 	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
-	vcc_value = ADCW;
+	uint32_t vcc_value = ADCW;
 	vcc_value = 1125300 / vcc_value; // (1100mV)(1023)/x to find Vcc in mV
-	return vcc_value;	// Return VCC in mV
+	return vcc_value;						// Return VCC in mV
 } // analog_vcc()
 
 
 
 uint32_t analog_read(uint32_t *vcc, uint8_t f_pin)
 {
-	uint32_t f_value = 0;
-	// Measure
-	ADMUX = (1<<REFS0) | f_pin;	// MUX to f_pin. Compare voltage with AVCC
-	ADCSRA |= (1<<ADSC); 				// begin conversion
-	while(ADCSRA & (1<<ADSC)); 	// wait for the conversion to happen
-	f_value = ADCW;						// Read it. 10 bit precision
-	f_value = (*vcc * f_value) / 1023; // correct vcc reference
-	return f_value;			// return read value in millivolts
+	ADMUX = (1<<REFS0) | f_pin;					// MUX to f_pin. Compare voltage with AVCC
+	ADCSRA |= (1<<ADSC); 								// begin conversion
+	while(ADCSRA & (1<<ADSC)); 					// wait for the conversion to happen
+	uint32_t f_value = ADCW;						// Read it. 10 bit precision
+	f_value = (*vcc * f_value) / 1023;	// correct vcc reference
+	return f_value;											// return read value in mV
 } // analog_read()
 
 
