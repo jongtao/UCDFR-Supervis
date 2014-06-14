@@ -136,8 +136,7 @@ void action_startup()
 	PORTD |= (1<<1);	// ON Dash/TQV
 	PORTB |= (1<<1);	// ON PEE Power
 	PORTB |= (1<<2);	// ON ACUES POWER
-
-	PORTC |= (1<<4) | (1<<5) | (1<<6);	// RGB
+	set_led(WHITE);
 } // action_startup()
 
 
@@ -149,10 +148,7 @@ void action_neutral()
 	PORTB |= (1<<6);	// ON AIR 2
 	PORTB |= (1<<4);	// ON Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
-
-	PORTC &= ~(1<<4);	// !R
-	PORTC &= ~(1<<5);	// !G
-	PORTC |= (1<<6);	// B
+	set_led(BLUE);
 } // action_neutral()
 
 
@@ -161,10 +157,7 @@ void action_charging()
 {
 	PORTB |= (1<<7);	// ON Charge Enable
 	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
-
-	PORTC &= ~(1<<4);	// !R
-	PORTC |= (1<<5);	// G
-	PORTC |= (1<<6);	// B
+	set_led(CYAN);
 } // action_charging()
 
 
@@ -172,14 +165,8 @@ void action_charging()
 void action_drive()
 {
 	buzz_now = 1;
-
-	PORTB &= ~(1<<7);	// OFF Charge Enable
-	PORTB |= (1<<4);	// ON Keyswitch Enable
 	PORTB |= (1<<3);	// ON Drive Enable
-
-	PORTC &= ~(1<<4);	// !R
-	PORTC |= (1<<5);	// G
-	PORTC &= ~(1<<6);	// !B
+	set_led(GREEN);
 } // action_drive()
 
 
@@ -187,10 +174,7 @@ void action_drive()
 void action_soft_fault()
 {
 	PORTB &= ~(1<<3);	// OFF Drive Enable
-
-	PORTC |= (1<<4);	// R
-	PORTC |= (1<<5);	// G
-	PORTC &= ~(1<<6);	// !B
+	set_led(YELLOW);
 } // action_soft_fault()
 
 
@@ -203,19 +187,14 @@ void action_hard_fault()
 	PORTB &= ~(1<<6);	// OFF AIR 2
 	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
 	PORTB &= ~(1<<3);	// OFF Drive Enable
-
-	PORTC |= (1<<4);	// R
-	PORTC &= ~(1<<5);	// !G
-	PORTC &= ~(1<<6);	// !B
+	set_led(RED);
 } // action_hard_fault()
 
 
 
 void action_fatal()
 {
-	PORTC |= (1<<4);	// R
-	PORTC &= ~(1<<5);	// !G
-	PORTC |= (1<<6);	// B
+	set_led(MAGENTA);
 } // action_fatal()
 
 
@@ -225,3 +204,10 @@ void reset_drive_sound()
 	buzz_now = 0;
 	buzzer_time = 3000;
 } // ready_to_drive_sound()
+
+
+
+void set_led(uint8_t color)
+{
+	PORTC = (color << 4) | (PORTC & LED_MASK);
+} // set_led()

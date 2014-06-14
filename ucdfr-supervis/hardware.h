@@ -11,6 +11,8 @@
 #define F_CPU 16000000UL // 16 MHz
 #define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
 
+#define LED_MASK 0x8F	// masks PORTC for leds
+
 #define BRAKE_FIFTEEN_PERCENT 150
 
 #define PEDAL_RATIO_NOMINATOR 1
@@ -86,6 +88,8 @@ Pin 4 R
 Pin 5 G
 Pin 6 B
 
+B	G	R
+
 B		Neutral
 G		Drive
 GB	Charging
@@ -95,6 +99,18 @@ RG	Soft Fault
 RGB	Startup
 */
 
+
+enum Color
+{
+	NO_COLOR,	// 000
+	RED,			// 00R
+	GREEN,		// 0G0
+	YELLOW,		// 0GR
+	BLUE,			// B00
+	MAGENTA,	// B0R
+	CYAN,			// BG0
+	WHITE			// BGR
+};
 
 
 void hard_init();
@@ -111,5 +127,6 @@ void action_hard_fault();
 void action_fatal();
 
 void reset_drive_sound();
+void set_led(uint8_t color);
 
 #endif
