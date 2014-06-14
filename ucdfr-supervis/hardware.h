@@ -12,6 +12,8 @@
 #define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
 
 #define LED_MASK 0x8F	// masks PORTC for leds
+#define BUZZER_MAX 2000	// two seconds
+#define BUZZER_TRIG 100 // beep 10 times
 
 #define BRAKE_FIFTEEN_PERCENT 150
 

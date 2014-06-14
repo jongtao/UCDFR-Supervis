@@ -10,7 +10,8 @@ ISR(TIMER1_COMPA_vect)
 {
 	if(buzz_now && buzzer_time > 0)
 	{
-		PORTD |= (1<<0); // ON Buzzer 
+		if(!(buzzer_time%BUZZER_TRIG))
+			PORTD ^= (1<<0); // TOGGLE Buzzer 
 		buzzer_time--;
 	} // buzz
 	else
@@ -198,7 +199,7 @@ void action_fatal()
 void reset_drive_sound()
 {
 	buzz_now = 0;
-	buzzer_time = 3000;
+	buzzer_time = BUZZER_MAX;
 } // ready_to_drive_sound()
 
 
