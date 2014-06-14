@@ -79,9 +79,13 @@ void get_inputs(uint16_t *events)
 	uint32_t controller_throttle1 = analog_read(&vcc, 4);
 	uint32_t controller_throttle2 = analog_read(&vcc, 5);
 
-	int pedal_difference = 0;
+	int pedal_difference =
+		(int)pedal1_value -
+		((int)pedal2_value * PEDAL_RATIO_NOMINATOR) / PEDAL_RATIO_DENOMINATOR;
+
 	int throttle1_transform =
 		THRTTL_SLOPE * controller_throttle1 + THRTTL_INTERCEPT;
+
 	int throttle2_transform =
 		THRTTL_SLOPE * controller_throttle2 + THRTTL_INTERCEPT;
 
@@ -102,10 +106,6 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<CHARGE_DOWN);
 
 	// SOFT_FAULT_SIG
-	pedal_difference =
-		pedal1_value -
-		(pedal2_value * PEDAL_RATIO_NOMINATOR) / PEDAL_RATIO_DENOMINATOR;
-
 	if(pedal_difference < -PEDAL1_TEN_PERCENT ||
 		pedal_difference > PEDAL1_TEN_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
