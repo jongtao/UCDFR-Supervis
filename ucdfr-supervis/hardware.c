@@ -53,7 +53,7 @@ void hard_init()
 
 uint32_t analog_vcc()
 {
-	ADMUX = (1<<REFS0) | 0x0E;				// comapare vcc against MUX 1110 1.1V
+	ADMUX = (1<<REFS0) | 0x1E;				// comapare vcc against MUX 1110 1.1V
 	_delay_ms(2);											// VCC to settle
 	ADCSRA |= (1<<ADSC); 							// begin conversion
 	while(ADCSRA & (1<<ADSC)); 				// wait for the conversion to happen
@@ -116,16 +116,16 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<CHARGE_DOWN);
 
 	// SOFT_FAULT_SIG
-	if(pedal_difference < -PEDAL1_TEN_PERCENT ||
+	if(/*pedal_difference < -PEDAL1_TEN_PERCENT ||*/
 		pedal_difference > PEDAL1_TEN_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
-	
+/*	
 	if(brake_value > BRAKE_MIN_MARGIN && pedal1_value > PEDAL1_TWENTYFIVE_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal and brake
 
 	if(pedal1_value < throttle1_transform || pedal1_value > throttle2_transform)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal vs controller's throttle
-
+*/
 	// SOFT_FAULT_REMEDIED
 	if(!(*events&(1<<SOFT_FAULT_SIG))) // if no SOFT_FAULT
 		*events |= (1<<SOFT_FAULT_REMEDIED);

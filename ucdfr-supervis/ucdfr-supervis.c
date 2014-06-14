@@ -78,7 +78,7 @@ int main()
 				break;
 			case SOFT_FAULT:
 				action_soft_fault();
-				if(event&(1<<SOFT_FAULT_REMEDIED)) state = DRIVE;
+				//if(event&(1<<SOFT_FAULT_REMEDIED)) state = DRIVE;
 				break;
 			case HARD_FAULT:
 				action_hard_fault();
