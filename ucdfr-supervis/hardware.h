@@ -37,6 +37,7 @@ A3	In	Neutral request
 */
 
 /* Port B
+B0	Out Precharge Relay
 B1	Out	PEE Power
 B2	Out	ACUES Power
 B3	Out	Drive Enable
