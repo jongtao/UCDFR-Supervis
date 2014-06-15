@@ -3,6 +3,7 @@
 
 volatile uint8_t buzz_now = 0;
 volatile uint16_t buzzer_time = BUZZER_MAX;
+static uint8_t glv_sys_voltage_low = 0;
 
 
 
@@ -100,7 +101,8 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<HV_UP);
 
 	// DRIVE_UP
-	if(PINA&(1<<2))//&& brake_value > BRAKE_FIFTEEN_PERCENT)
+	if(PINA&(1<<2) && PIND&(1<<5) && PIND&(1<<6))
+		//&& brake_value > BRAKE_FIFTEEN_PERCENT)
 		*events |= (1<<DRIVE_UP);
 
 	// NEUTRAL_UP
@@ -139,6 +141,12 @@ void get_inputs(uint16_t *events)
 
 	if(portc_triggers || portd_triggers || porte_triggers)
 		*events |= (1<<HARD_FAULT_SIG);
+
+	// GLV Voltage Low
+	if(!(PINF&(1<<0)))
+		glv_sys_voltage_low = 1;
+	else
+		glv_sys_voltage_low = 0;
 } // get_inputs()
 
 
@@ -223,5 +231,8 @@ void reset_drive_sound()
 
 void set_led(uint8_t color)
 {
-	PORTC = (color << 4) | (PORTC & LED_MASK);
+	if(glv_sys_voltage_low)
+		PORTC = (MAGENTA << 4) | (PORTC & LED_MASK);
+	else
+		PORTC = (color << 4) | (PORTC & LED_MASK);
 } // set_led()

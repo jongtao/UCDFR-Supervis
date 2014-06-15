@@ -59,11 +59,11 @@ C6	Out	Blue LED
 /* Port D
 D0	Out RTD Buzzer
 D1	Out	Dash/TQV
-D2	Out	Reserved 1 (DISABLED)
-D3	Out Reserved 2 (DISABLED)
+D2	Out	Reserved 1 (Unused)
+D3	Out Reserved 2 (Unused)
 D4	In	Charger Detect
-D5	In	Inv. 1 Contact Request (Unused)
-D6	In	Inv. 2 Contact Request (Unused)
+D5	In	Inv. 1 Contact Request
+D6	In	Inv. 2 Contact Request
 D7	In	Master Switch (Active Low)
 */
 
@@ -75,7 +75,7 @@ E7	In	Powerstage BPS Error (Active Low)
 */
 
 /* Port F
-F0	In	GLV Sys Voltage (Unused)
+F0	In	GLV Sys Voltage
 F1	In	DC Link Voltage (Unused)
 F2	In	Brake Sensor
 F3	In	Traction Sys Current (Unused)
