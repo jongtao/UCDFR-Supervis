@@ -14,17 +14,20 @@ static uint8_t glv_sys_voltage_low = 0;
 
 ISR(TIMER1_COMPA_vect)
 {
-	if(buzz_now && buzzer_time > 0)
+	if(buzz_now)
 	{
-		if(!(buzzer_time%BUZZER_TRIG))
-			PORTD ^= (1<<0); // TOGGLE Buzzer 
-		buzzer_time--;
-	} // buzz
-	else
-	{
-		PORTD &= ~(1<<0); // OFF Buzzer 
-		buzz_now = 0;
-	} // stop buzzer
+		if(buzzer_time > 0)
+		{
+			if(!(buzzer_time%BUZZER_TRIG))
+				PORTD ^= (1<<0); // TOGGLE Buzzer 
+			buzzer_time--;
+		} // buzz
+		else
+		{
+			PORTD &= ~(1<<0); // OFF Buzzer 
+			buzz_now = 0;
+		} // stop buzzer
+	}
 
 	if(precharge_now)
 	{
