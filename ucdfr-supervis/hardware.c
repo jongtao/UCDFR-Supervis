@@ -135,7 +135,7 @@ void get_inputs(uint16_t *events)
 		!(PINC&(1<<0) && PINC&(1<<1) && PINC&(1<<2) && PINC&(1<<3));
 	uint8_t portd_triggers = !(PIND&(1<<7));
 	uint8_t porte_triggers =
-		!(PINE&(1<<0)) || !(PINE&(1<<1)) || PINE&(1<<6) || PINE&(1<<7);
+		!(PINE&(1<<0) && PINE&(1<<1) && PINE&(1<<6) && PINE&(1<<7));
 
 	if(portc_triggers || portd_triggers || porte_triggers)
 		*events |= (1<<HARD_FAULT_SIG);

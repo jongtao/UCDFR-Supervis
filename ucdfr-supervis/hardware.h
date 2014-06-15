@@ -70,8 +70,8 @@ D7	In	Master Switch (Active Low)
 /* Port E
 E0	In	Cockpit Estop (Active Low)
 E1	In	Right Estop (Active Low)
-E6	In	Powerstage IMD Error
-E7	In	Powerstage BPS Error
+E6	In	Powerstage IMD Error (Active Low)
+E7	In	Powerstage BPS Error (Active Low)
 */
 
 /* Port F
