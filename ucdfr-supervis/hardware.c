@@ -51,7 +51,7 @@ void hard_init()
 {
 	CLKPR = 0x80, CLKPR = 0; // zero prescaler
 
-	DDRA = (0x00);	// A1-A3 In
+	//DDRA = (0x00);	// A1-A3 In
 	DDRB = (0xFF);	// B0-B7 Out
 	DDRC = (0x70);	// C0-C3 In, C4-C6 Out
 	DDRD = (0x0F);	// D0-D3 Out, D4-D7 In
