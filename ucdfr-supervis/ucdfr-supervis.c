@@ -4,32 +4,6 @@
 #include "state_event.h"
 
 
-/*
-enum States
-{
-	STARTUP,
-	NEUTRAL,
-	DRIVE,
-	CHARGING,
-	SOFT_FAULT,
-	HARD_FAULT
-}; // enum States
-
-
-
-enum Events
-{
-	HV_UP,
-	DRIVE_UP,
-	NEUTRAL_UP,
-	CHARGE_UP,
-	CHARGE_DOWN,
-	SOFT_FAULT_SIG,
-	SOFT_FAULT_REMEDIED,
-	HARD_FAULT_SIG
-}; // enum Events
-*/
-
 
 void fatal_fault()
 {
@@ -64,7 +38,7 @@ int main()
 			case NEUTRAL:
 				action_neutral();
 				if(event&(1<<DRIVE_UP)) state = DRIVE;
-				if(event&(1<<CHARGE_UP)) state = CHARGING;
+				if(event&(1<<CHARGE_UP)) state = PRECHARGE;
 				break;
 			case DRIVE:
 				action_drive();
@@ -72,9 +46,15 @@ int main()
 				//if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
 				if(state != DRIVE) reset_drive_sound(); 
 				break;
+			case PRECHARGE:
+				action_precharge();
+				if(event&(1<<PRECHARGE_DONE)) state = CHARGING;
+				if(event&(1<<CHARGE_DOWN)) state = NEUTRAL;
+				if(state != PRECHARGE) reset_precharge_timer();
+				break;
 			case CHARGING:
 				action_charging();
-				if(event&(1<<CHARGE_DOWN)) state = NEUTRAL;
+				if(event&(1<<CHARGE_DOWN)) state = PRECHARGE;
 				break;
 			case SOFT_FAULT:
 				action_soft_fault();

@@ -14,6 +14,7 @@
 #define LED_MASK 0x8F	// masks PORTC for leds
 #define BUZZER_MAX 1500	// beep duration
 #define BUZZER_TRIG 50	// toggle beep every x ms
+#define PRECHARGE_MAX 5000	// 5 second precharge
 
 #define BRAKE_FIFTEEN_PERCENT 750
 
@@ -123,6 +124,7 @@ void get_inputs(uint16_t *events);
 
 void action_startup();
 void action_neutral();
+void action_precharge();
 void action_charging();
 void action_drive();
 void action_soft_fault();
@@ -130,6 +132,7 @@ void action_hard_fault();
 void action_fatal();
 
 void reset_drive_sound();
+void reset_precharge_timer();
 void set_led(uint8_t color);
 
 #endif

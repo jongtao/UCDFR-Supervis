@@ -3,6 +3,11 @@
 
 volatile uint8_t buzz_now = 0;
 volatile uint16_t buzzer_time = BUZZER_MAX;
+
+volatile uint8_t precharge_now = 0;
+volatile uint16_t precharge_time = PRECHARGE_MAX;
+volatile uint8_t precharging_done = 0;
+
 static uint8_t glv_sys_voltage_low = 0;
 
 
@@ -20,6 +25,19 @@ ISR(TIMER1_COMPA_vect)
 		PORTD &= ~(1<<0); // OFF Buzzer 
 		buzz_now = 0;
 	} // stop buzzer
+
+	if(precharge_now && precharge_time > 0)
+	{
+		PORTD |= (1<<0);	// ON Buzzer
+		precharge_time--;
+	} // delay contactor
+	else
+		if(precharge_now && !(precharge_time > 0))
+		{
+			PORTD &= ~(1<<0);	// OFF Buzzer
+			precharge_now = 0;
+			precharging_done = 1;
+		} // end delay
 } // ISR(TIMER1)
 
 
@@ -109,6 +127,10 @@ void get_inputs(uint16_t *events)
 	if(PINA&(1<<3))
 		*events |= (1<<NEUTRAL_UP);
 
+	// PRECHARGE_DONE
+	if(precharging_done)
+		*events |= (1<<PRECHARGE_DONE);
+
 	// CHARGE_UP
 	if(PIND&(1<<4))
 		*events |= (1<<CHARGE_UP);
@@ -173,10 +195,19 @@ void action_neutral()
 
 
 
+void action_precharge()
+{
+	precharge_now = 1;
+	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
+	PORTB |= (1<<7);	// ON Charge Enable
+	PORTB &= ~(1<<0);	// OFF Precharge
+} // action_precharge()
+
+
+
 void action_charging()
 {
-	PORTB |= (1<<7);	// ON Charge Enable
-	PORTB &= ~(1<<4);	// OFF Keyswitch Enable
+	PORTB |= (1<<0);	// ON Precharge
 	set_led(CYAN);
 } // action_charging()
 
@@ -226,6 +257,15 @@ void reset_drive_sound()
 	buzz_now = 0;
 	buzzer_time = BUZZER_MAX;
 } // ready_to_drive_sound()
+
+
+
+void reset_precharge_timer()
+{
+	precharge_now = 0;
+	precharge_time = PRECHARGE_MAX;
+	precharging_done = 0;
+} // reset_precharge_timer()
 
 
 
