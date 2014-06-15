@@ -51,18 +51,18 @@ void hard_init()
 {
 	CLKPR = 0x80, CLKPR = 0; // zero prescaler
 
-	//DDRA = (0x00);	// A1-A3 In
+	DDRA = (0x00);	// A1-A3 In
 	DDRB = (0xFF);	// B0-B7 Out
 	DDRC = (0x70);	// C0-C3 In, C4-C6 Out
 	DDRD = (0x0F);	// D0-D3 Out, D4-D7 In
 	DDRE = (0x00);	// E0-E7 In
 	DDRF = (0x00);	// F0-F7 In
 
-	PORTA = (0x0E);	// Pullup on A1-A3
-	PORTC = (0x0F);	// Pullup on C0-C3
-	PORTC = (0x80);	// Pullup on D7
-	PORTE	= (0x03);	// Pullup on E0-E1
-	PORTF = (0xFF);	// Pullup on F0-F7
+	//PORTA = (0x0E);	// Pullup on A1-A3
+	//PORTC = (0x0F);	// Pullup on C0-C3
+	//PORTC = (0x80);	// Pullup on D7
+	//PORTE	= (0x03);	// Pullup on E0-E1
+	//PORTF = (0xFF);	// Pullup on F0-F7
 
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0); // Prepare ADC
 	ADCSRB = 0x80;	// "High Speed" ADC
