@@ -26,18 +26,20 @@ ISR(TIMER1_COMPA_vect)
 		buzz_now = 0;
 	} // stop buzzer
 
-	if(precharge_now && precharge_time > 0)
+	if(precharge_now)
 	{
-		PORTD |= (1<<0);	// ON Buzzer
-		precharge_time--;
-	} // delay contactor
-	else
-		if(precharge_now && !(precharge_time > 0))
+		if(precharge_time > 0)
+		{
+			PORTD |= (1<<0);	// ON Buzzer
+			precharge_time--;
+		} // delay contactor
+		else
 		{
 			PORTD &= ~(1<<0);	// OFF Buzzer
 			precharge_now = 0;
 			precharging_done = 1;
 		} // end delay
+	} // if currently precharging
 } // ISR(TIMER1)
 
 
@@ -104,16 +106,19 @@ void get_inputs(uint16_t *events)
 	uint32_t controller_throttle1 = analog_read(&vcc, 4);
 	uint32_t controller_throttle2 = analog_read(&vcc, 5);
 
-	int pedal_difference =
-		(int)pedal1_value -
-		((int)pedal2_value * PEDAL_RATIO_NOMINATOR) / PEDAL_RATIO_DENOMINATOR;
+	int pedal2_in_pedal1 =
+		((int)pedal2_value * PEDAL_SLOPE_NOMIN) / PEDAL_SLOPE_DENOM +
+		PEDAL_INTERCEPT;
 
+
+	int pedal_difference = (int)pedal1_value - (int)pedal2_in_pedal1;
+/*
 	int throttle1_transform =
 		THRTTL_SLOPE * controller_throttle1 + THRTTL_INTERCEPT;
 
 	int throttle2_transform =
 		THRTTL_SLOPE * controller_throttle2 + THRTTL_INTERCEPT;
-
+*/
 	// HV_UP
 	if(PINA&(1<<1))
 		*events |= (1<<HV_UP);
@@ -140,9 +145,21 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<CHARGE_DOWN);
 
 	// SOFT_FAULT_SIG
-	if(/*pedal_difference < -PEDAL1_TEN_PERCENT ||*/
-		pedal_difference > PEDAL1_TEN_PERCENT)
-		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
+
+	//if(pedal1_value < PEDAL2_BEGIN_IN_PEDAL1)
+
+	if(pedal1_value > PEDAL2_BEGIN_IN_PEDAL1 &&
+		pedal1_value < PEDAL2_END_IN_PEDAL1)
+	{
+		if(/*pedal_difference < -PEDAL1_TEN_PERCENT ||*/
+			pedal_difference > PEDAL1_TEN_PERCENT)
+		{
+			*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
+		} // compare pedal sensors
+	} // middle part with both pedals 1 and 2.
+
+	//if(pedal1 > PEDAL2_END_IN_PEDAL1)
+
 /*	
 	if(brake_value > BRAKE_MIN_MARGIN && pedal1_value > PEDAL1_TWENTYFIVE_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal and brake

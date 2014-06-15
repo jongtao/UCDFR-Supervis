@@ -18,18 +18,24 @@
 
 #define BRAKE_FIFTEEN_PERCENT 750
 
-#define PEDAL_RATIO_NOMINATOR 1
-#define PEDAL_RATIO_DENOMINATOR 1
+#define PEDAL2_BEGIN_IN_PEDAL1 100 // Places of pedal1 vs pedal2 discontinuity
+#define PEDAL2_END_IN_PEDAL1 5000
+
+// Express pedal 2 in terms of pedal 1
+#define PEDAL_SLOPE_NOMIN 4825
+#define PEDAL_SLOPE_DENOM 10000
+#define PEDAL_INTERCEPT 483
 
 #define PEDAL1_TEN_PERCENT 500
 #define PEDAL1_TWENTYFIVE_PERCENT 1250
 
 #define BRAKE_MIN_MARGIN 100
 
+/*
 // Express controller's throttle as pedal1 travel
 #define THRTTL_SLOPE 1
 #define THRTTL_INTERCEPT 0
-
+*/
 
 /* Port A
 A1	In	HV request
