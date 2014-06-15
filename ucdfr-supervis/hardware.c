@@ -58,10 +58,10 @@ void hard_init()
 	DDRE = (0x00);	// E0-E7 In
 	DDRF = (0x00);	// F0-F7 In
 
-	//PORTA = (0x0E);	// Pullup on A1-A3
-	//PORTC = (0x0F);	// Pullup on C0-C3
-	//PORTC = (0x80);	// Pullup on D7
-	//PORTE	= (0x03);	// Pullup on E0-E1
+	PORTA = (0x0E);	// Pullup on A1-A3
+	PORTC = (0x0F);	// Pullup on C0-C3
+	PORTD = (0x80);	// Pullup on D7
+	PORTE	= (0xC3);	// Pullup on E0-E1
 	//PORTF = (0xFF);	// Pullup on F0-F7
 
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0); // Prepare ADC
@@ -123,16 +123,16 @@ void get_inputs(uint16_t *events)
 		THRTTL_SLOPE * controller_throttle2 + THRTTL_INTERCEPT;
 */
 	// HV_UP
-	if(PINA&(1<<1))
+	if(!(PINA&(1<<1)))
 		*events |= (1<<HV_UP);
 
 	// DRIVE_UP
-	if(PINA&(1<<2) && PIND&(1<<5) && PIND&(1<<6))
+	if(!(PINA&(1<<2)) && PIND&(1<<5) && PIND&(1<<6))
 		//&& brake_value > BRAKE_FIFTEEN_PERCENT)
 		*events |= (1<<DRIVE_UP);
 
 	// NEUTRAL_UP
-	if(PINA&(1<<3))
+	if(!(PINA&(1<<3)))
 		*events |= (1<<NEUTRAL_UP);
 
 	// PRECHARGE_DONE
@@ -176,10 +176,10 @@ void get_inputs(uint16_t *events)
 
 	// HARD_FAULT_SIG
 	uint8_t portc_triggers =
-		PINC&(1<<0) || PINC&(1<<1) || PINC&(1<<2) || PINC&(1<<3);
-	uint8_t portd_triggers = PIND&(1<<7);
+		!(PINC&(1<<0) && PINC&(1<<1) && PINC&(1<<2) && PINC&(1<<3));
+	uint8_t portd_triggers = !(PIND&(1<<7));
 	uint8_t porte_triggers =
-		PINE&(1<<0) || PINE&(1<<1) || PINE&(1<<6) || PINE&(1<<7);
+		!(PINE&(1<<0) && PINE&(1<<1) && PINE&(1<<6) && PINE&(1<<7));
 
 	if(portc_triggers || portd_triggers || porte_triggers)
 		*events |= (1<<HARD_FAULT_SIG);

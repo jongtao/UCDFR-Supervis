@@ -55,10 +55,10 @@ B7	Out	Charger Enable
 */
 
 /* Port C
-C0	In	Left Estop
-C1	In	Brake Overtravel
-C2	In	Interlock Loop
-C3	In	Inertia Switch
+C0	In	Left Estop (Active Low)
+C1	In	Brake Overtravel (Active Low)
+C2	In	Interlock Loop (Active Low)
+C3	In	Inertia Switch (Active Low)
 C4	Out	Red LED
 C5	Out	Green LED
 C6	Out	Blue LED
@@ -72,14 +72,14 @@ D3	Out Reserved 2 (Unused)
 D4	In	Charger Detect
 D5	In	Inv. 1 Contact Request
 D6	In	Inv. 2 Contact Request
-D7	In	Master Switch
+D7	In	Master Switch (Active Low)
 */
 
 /* Port E
-E0	In	Cockpit Estop
-E1	In	Right Estop
-E6	In	Powerstage IMD Error
-E7	In	Powerstage BPS Error
+E0	In	Cockpit Estop (Active Low)
+E1	In	Right Estop (Active Low)
+E6	In	Powerstage IMD Error (Active Low)
+E7	In	Powerstage BPS Error (Active Low)
 */
 
 /* Port F
