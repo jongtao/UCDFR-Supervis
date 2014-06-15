@@ -31,9 +31,9 @@
 
 
 /* Port A
-A1	In	HV request (Active Low)
-A2	In	Drive request (Active Low)
-A3	In	Neutral request (Active Low)
+A1	In	HV request
+A2	In	Drive request
+A3	In	Neutral request
 */
 
 /* Port B

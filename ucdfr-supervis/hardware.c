@@ -96,15 +96,15 @@ void get_inputs(uint16_t *events)
 		THRTTL_SLOPE * controller_throttle2 + THRTTL_INTERCEPT;
 
 	// HV_UP
-	if(!(PINA&(1<<1)))
+	if(PINA&(1<<1))
 		*events |= (1<<HV_UP);
 
 	// DRIVE_UP
-	if(!(PINA&(1<<2)))//&& brake_value > BRAKE_FIFTEEN_PERCENT)
+	if(PINA&(1<<2))//&& brake_value > BRAKE_FIFTEEN_PERCENT)
 		*events |= (1<<DRIVE_UP);
 
 	// NEUTRAL_UP
-	if(!(PINA&(1<<3)))
+	if(PINA&(1<<3))
 		*events |= (1<<NEUTRAL_UP);
 
 	// CHARGE_UP
