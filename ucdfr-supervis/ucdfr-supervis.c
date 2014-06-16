@@ -43,7 +43,7 @@ int main()
 			case DRIVE:
 				action_drive();
 				if(event&(1<<NEUTRAL_UP) || event&(1<<CHARGE_UP)) state = NEUTRAL;
-				//if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
+				if(event&(1<<SOFT_FAULT_SIG)) state = SOFT_FAULT;
 				if(state != DRIVE) reset_drive_sound(); 
 				break;
 			case PRECHARGE:
@@ -58,7 +58,8 @@ int main()
 				break;
 			case SOFT_FAULT:
 				action_soft_fault();
-				//if(event&(1<<SOFT_FAULT_REMEDIED)) state = DRIVE;
+				if(event&(1<<SOFT_FAULT_REMEDIED)) state = DRIVE;
+				if(state != SOFT_FAULT) reset_fault_sound();
 				break;
 			case HARD_FAULT:
 				action_hard_fault();

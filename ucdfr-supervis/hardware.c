@@ -8,6 +8,10 @@ volatile uint8_t precharge_now = 0;
 volatile uint16_t precharge_time = PRECHARGE_MAX;
 volatile uint8_t precharging_done = 0;
 
+volatile uint8_t fault_now = 0;
+volatile uint16_t fault_time = FAULT_MAX;
+
+
 static uint8_t glv_sys_voltage_low = 0;
 
 
@@ -43,6 +47,22 @@ ISR(TIMER1_COMPA_vect)
 			precharging_done = 1;
 		} // end delay
 	} // if currently precharging
+
+	if(fault_now)
+	{
+		if(fault_time > 0)
+		{
+			if(!(fault_time%FAULT_TRIG))
+				PORTD ^= (1<<0); // TOGGLE Buzzer 
+			fault_time--;
+		} // buzz
+		else
+		{
+			PORTD &= ~(1<<0); // OFF Buzzer 
+			fault_now = 0;
+		} // stop buzzer
+	}
+
 } // ISR(TIMER1)
 
 
@@ -82,7 +102,7 @@ uint32_t analog_vcc()
 	ADCSRA |= (1<<ADSC); 							// begin conversion
 	while(ADCSRA & (1<<ADSC)); 				// wait for the conversion to happen
 	uint32_t vcc_value = ADCW;
-	vcc_value = 1125300 / vcc_value;	// (1100mV)(1023)/x to find Vcc in mV
+	vcc_value = (INTERNAL_REF * (1023L)) / vcc_value;	// find Vcc in mV
 	return vcc_value;									// Return VCC in mV
 } // analog_vcc()
 
@@ -104,17 +124,19 @@ void get_inputs(uint16_t *events)
 {
 	uint32_t vcc = analog_vcc();
 	uint32_t brake_value = analog_read(&vcc, 2);
-	uint32_t pedal1_value = analog_read(&vcc, 6);
-	uint32_t pedal2_value = analog_read(&vcc, 7);
-	uint32_t controller_throttle1 = analog_read(&vcc, 4);
-	uint32_t controller_throttle2 = analog_read(&vcc, 5);
+	uint32_t pedal1_value = analog_read(&vcc, 7);
+	uint32_t pedal2_value = analog_read(&vcc, 6);
+	//uint32_t controller_throttle1 = analog_read(&vcc, 4);
+	//uint32_t controller_throttle2 = analog_read(&vcc, 5);
 
 	int pedal2_in_pedal1 =
 		((int)pedal2_value * PEDAL_SLOPE_NOMIN) / PEDAL_SLOPE_DENOM +
 		PEDAL_INTERCEPT;
 
-
 	int pedal_difference = (int)pedal1_value - (int)pedal2_in_pedal1;
+
+	if(pedal_difference < 0)
+		pedal_difference = -pedal_difference;
 /*
 	int throttle1_transform =
 		THRTTL_SLOPE * controller_throttle1 + THRTTL_INTERCEPT;
@@ -127,8 +149,8 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<HV_UP);
 
 	// DRIVE_UP
-	if(!(PINA&(1<<2)) && PIND&(1<<5) && PIND&(1<<6))
-		//&& brake_value > BRAKE_FIFTEEN_PERCENT)
+	if(!(PINA&(1<<2)) && PIND&(1<<5) && PIND&(1<<6)
+		&& brake_value > BRAKE_FIFTEEN_PERCENT)
 		*events |= (1<<DRIVE_UP);
 
 	// NEUTRAL_UP
@@ -148,26 +170,17 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<CHARGE_DOWN);
 
 	// SOFT_FAULT_SIG
-
-	//if(pedal1_value < PEDAL2_BEGIN_IN_PEDAL1)
-
+	
 	if(pedal1_value > PEDAL2_BEGIN_IN_PEDAL1 &&
-		pedal1_value < PEDAL2_END_IN_PEDAL1)
-	{
-		if(/*pedal_difference < -PEDAL1_TEN_PERCENT ||*/
-			pedal_difference > PEDAL1_TEN_PERCENT)
-		{
-			*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
-		} // compare pedal sensors
-	} // middle part with both pedals 1 and 2.
-
-	//if(pedal1 > PEDAL2_END_IN_PEDAL1)
-
-/*	
+		pedal_difference > PEDAL1_TEN_PERCENT)
+		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
+		
+	
 	if(brake_value > BRAKE_MIN_MARGIN && pedal1_value > PEDAL1_TWENTYFIVE_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal and brake
-
-	if(pedal1_value < throttle1_transform || pedal1_value > throttle2_transform)
+		
+/*
+	if(pedal1_value < controller_throttle1 || pedal1_value > controller_throttle2)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal vs controller's throttle
 */
 	// SOFT_FAULT_REMEDIED
@@ -244,6 +257,7 @@ void action_drive()
 
 void action_soft_fault()
 {
+	fault_now = 1;
 	PORTB &= ~(1<<3);	// OFF Drive Enable
 	set_led(YELLOW);
 } // action_soft_fault()
@@ -252,6 +266,7 @@ void action_soft_fault()
 
 void action_hard_fault()
 {
+	fault_now = 1;
 	PORTB &= ~(1<<7);	// OFF Charge Enable
 	PORTD &= ~(1<<1);	// OFF Dash/TQV
 	PORTB &= ~(1<<5);	// OFF AIR 1
@@ -276,7 +291,7 @@ void reset_drive_sound()
 {
 	buzz_now = 0;
 	buzzer_time = BUZZER_MAX;
-} // ready_to_drive_sound()
+} // reset_drive_sound()
 
 
 
@@ -286,6 +301,14 @@ void reset_precharge_timer()
 	precharge_time = PRECHARGE_MAX;
 	precharging_done = 0;
 } // reset_precharge_timer()
+
+
+
+void reset_fault_sound()
+{
+	fault_now = 0;
+	fault_time = FAULT_MAX;
+} // reset_fault_sound()
 
 
 

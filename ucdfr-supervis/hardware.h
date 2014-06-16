@@ -10,26 +10,29 @@
 
 #define F_CPU 16000000UL // 16 MHz
 #define CTC_COUNT (((F_CPU/1000)/8) - 1) // 1 millisecond CTC
+#define INTERNAL_REF 1085	// internal 1.1V ref actual voltage
 
 #define LED_MASK 0x8F	// masks PORTC for leds
 #define BUZZER_MAX 1500	// beep duration
 #define BUZZER_TRIG 50	// toggle beep every x ms
 #define PRECHARGE_MAX 5000	// 5 second precharge
+#define FAULT_MAX 1000
+#define FAULT_TRIG 100
 
-#define BRAKE_FIFTEEN_PERCENT 750
+//#define BRAKE_FIFTEEN_PERCENT 400
+#define BRAKE_FIFTEEN_PERCENT 0
 
-#define PEDAL2_BEGIN_IN_PEDAL1 100 // Places of pedal1 vs pedal2 discontinuity
-#define PEDAL2_END_IN_PEDAL1 5000
+#define PEDAL2_BEGIN_IN_PEDAL1 1000 // Places of pedal1 vs pedal2 discontinuity
+//#define PEDAL2_END_IN_PEDAL1 5000
 
 // Express pedal 2 in terms of pedal 1
-#define PEDAL_SLOPE_NOMIN 4825
-#define PEDAL_SLOPE_DENOM 10000
-#define PEDAL_INTERCEPT 483
+#define PEDAL_SLOPE_NOMIN 1978L
+#define PEDAL_SLOPE_DENOM 1000L
+#define PEDAL_INTERCEPT -66
 
-#define PEDAL1_TEN_PERCENT 500
-#define PEDAL1_TWENTYFIVE_PERCENT 1250
-
-#define BRAKE_MIN_MARGIN 100
+#define PEDAL1_TEN_PERCENT 396
+#define PEDAL1_TWENTYFIVE_PERCENT 1790
+#define BRAKE_MIN_MARGIN 400
 
 /*
 // Express controller's throttle as pedal1 travel
@@ -89,8 +92,8 @@ F2	In	Brake Sensor
 F3	In	Traction Sys Current (Unused)
 F4	In	Throttle to Ctrlr 1
 F5	In	Throttle to Ctrlr 2
-F6	In	Throttle Sensor 1
-F7	In	Throttle Sensor 2
+F6	In	Throttle Sensor 2
+F7	In	Throttle Sensor 1
 */
 
 /* State Color
