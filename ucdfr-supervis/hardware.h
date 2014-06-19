@@ -20,19 +20,19 @@
 #define FAULT_TRIG 100
 
 //#define BRAKE_FIFTEEN_PERCENT 400
-#define BRAKE_FIFTEEN_PERCENT 0
+#define BRAKE_FIFTEEN_PERCENT 575
 
-#define PEDAL2_BEGIN_IN_PEDAL1 1000 // Places of pedal1 vs pedal2 discontinuity
+//#define PEDAL2_BEGIN_IN_PEDAL1 1000 // Places of pedal1 vs pedal2 discontinuity
 //#define PEDAL2_END_IN_PEDAL1 5000
 
 // Express pedal 2 in terms of pedal 1
-#define PEDAL_SLOPE_NOMIN 1978L
+#define PEDAL_SLOPE_NOMIN 2056L
 #define PEDAL_SLOPE_DENOM 1000L
-#define PEDAL_INTERCEPT -66
+#define PEDAL_INTERCEPT -205
 
 #define PEDAL1_TEN_PERCENT 396
 #define PEDAL1_TWENTYFIVE_PERCENT 1790
-#define BRAKE_MIN_MARGIN 400
+#define BRAKE_MIN_MARGIN 575 // calibrate this
 
 /*
 // Express controller's throttle as pedal1 travel
@@ -90,8 +90,8 @@ F0	In	GLV Sys Voltage
 F1	In	DC Link Voltage (Unused)
 F2	In	Brake Sensor
 F3	In	Traction Sys Current (Unused)
-F4	In	Throttle to Ctrlr 1
-F5	In	Throttle to Ctrlr 2
+F4	In	Throttle to Ctrlr 1 (Unused)
+F5	In	Throttle to Ctrlr 2 (Unused)
 F6	In	Throttle Sensor 2
 F7	In	Throttle Sensor 1
 */

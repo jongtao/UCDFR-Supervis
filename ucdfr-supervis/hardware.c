@@ -123,7 +123,7 @@ uint32_t analog_read(uint32_t *vcc, uint8_t f_pin)
 void get_inputs(uint16_t *events)
 {
 	uint32_t vcc = analog_vcc();
-	uint32_t brake_value = analog_read(&vcc, 2);
+	uint32_t brake_value = analog_read(&vcc, 3);
 	uint32_t pedal1_value = analog_read(&vcc, 7);
 	uint32_t pedal2_value = analog_read(&vcc, 6);
 	//uint32_t controller_throttle1 = analog_read(&vcc, 4);
@@ -171,8 +171,7 @@ void get_inputs(uint16_t *events)
 
 	// SOFT_FAULT_SIG
 	
-	if(pedal1_value > PEDAL2_BEGIN_IN_PEDAL1 &&
-		pedal_difference > PEDAL1_TEN_PERCENT)
+	if(pedal_difference > PEDAL1_TEN_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
 		
 	
@@ -198,10 +197,12 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<HARD_FAULT_SIG);
 
 	// GLV Voltage Low
+	/*
 	if(!(PINF&(1<<0)))
 		glv_sys_voltage_low = 1;
 	else
 		glv_sys_voltage_low = 0;
+		*/
 } // get_inputs()
 
 
