@@ -124,13 +124,13 @@ void get_inputs(uint16_t *events)
 {
 	uint32_t vcc = analog_vcc();
 	uint32_t brake_value = analog_read(&vcc, 3);
-	uint32_t pedal1_value = analog_read(&vcc, 7);
+	uint32_t pedal1_value = analog_read(&vcc, 5);
 	uint32_t pedal2_value = analog_read(&vcc, 6);
 	//uint32_t controller_throttle1 = analog_read(&vcc, 4);
 	//uint32_t controller_throttle2 = analog_read(&vcc, 5);
 
 	int pedal2_in_pedal1 =
-		((int)pedal2_value * PEDAL_SLOPE_NOMIN) / PEDAL_SLOPE_DENOM +
+		((long)pedal2_value * PEDAL_SLOPE_NOMIN) / PEDAL_SLOPE_DENOM +
 		PEDAL_INTERCEPT;
 
 	int pedal_difference = (int)pedal1_value - (int)pedal2_in_pedal1;
@@ -173,7 +173,9 @@ void get_inputs(uint16_t *events)
 	
 	if(pedal_difference > PEDAL1_TEN_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor comparison
-		
+
+	if(pedal1_value < PEDAL1_DROPOUT || pedal2_value < PEDAL2_DROPOUT)
+		*events |= (1<<SOFT_FAULT_SIG);	// Pedal sensor disconnect
 	
 	if(brake_value > BRAKE_MIN_MARGIN && pedal1_value > PEDAL1_TWENTYFIVE_PERCENT)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal and brake
@@ -183,8 +185,10 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<SOFT_FAULT_SIG); // Pedal vs controller's throttle
 */
 	// SOFT_FAULT_REMEDIED
-	if(!(*events&(1<<SOFT_FAULT_SIG))) // if no SOFT_FAULT
-		*events |= (1<<SOFT_FAULT_REMEDIED);
+	if(pedal_difference <= PEDAL1_TEN_PERCENT &&
+		pedal1_value < PEDAL_MIN_MARGIN &&
+		pedal1_value >= PEDAL1_DROPOUT && pedal2_value >= PEDAL2_DROPOUT)
+			*events |= (1<<SOFT_FAULT_REMEDIED);
 
 	// HARD_FAULT_SIG
 	uint8_t portc_triggers =
@@ -197,12 +201,12 @@ void get_inputs(uint16_t *events)
 		*events |= (1<<HARD_FAULT_SIG);
 
 	// GLV Voltage Low
-	/*
+/*	
 	if(!(PINF&(1<<0)))
 		glv_sys_voltage_low = 1;
 	else
 		glv_sys_voltage_low = 0;
-		*/
+	*/	
 } // get_inputs()
 
 
@@ -250,7 +254,7 @@ void action_charging()
 void action_drive()
 {
 	buzz_now = 1;
-	PORTB |= (1<<3);	// ON Drive Enable
+	//PORTB |= (1<<3);	// ON Drive Enable
 	set_led(GREEN);
 } // action_drive()
 

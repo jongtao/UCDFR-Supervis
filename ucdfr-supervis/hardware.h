@@ -15,9 +15,9 @@
 #define LED_MASK 0x8F	// masks PORTC for leds
 #define BUZZER_MAX 1500	// beep duration
 #define BUZZER_TRIG 50	// toggle beep every x ms
-#define PRECHARGE_MAX 5000	// 5 second precharge
-#define FAULT_MAX 1000
-#define FAULT_TRIG 100
+#define PRECHARGE_MAX 3000	// 5 second precharge
+#define FAULT_MAX 3000
+#define FAULT_TRIG 25
 
 //#define BRAKE_FIFTEEN_PERCENT 400
 #define BRAKE_FIFTEEN_PERCENT 575
@@ -28,11 +28,15 @@
 // Express pedal 2 in terms of pedal 1
 #define PEDAL_SLOPE_NOMIN 2056L
 #define PEDAL_SLOPE_DENOM 1000L
-#define PEDAL_INTERCEPT -205
+#define PEDAL_INTERCEPT -205L
 
-#define PEDAL1_TEN_PERCENT 396
+#define PEDAL1_DROPOUT 444 // 414
+#define PEDAL2_DROPOUT 269 // 239
+
+#define PEDAL1_TEN_PERCENT 400
 #define PEDAL1_TWENTYFIVE_PERCENT 1790
 #define BRAKE_MIN_MARGIN 575 // calibrate this
+#define PEDAL_MIN_MARGIN 910
 
 /*
 // Express controller's throttle as pedal1 travel
@@ -91,9 +95,9 @@ F1	In	DC Link Voltage (Unused)
 F2	In	Brake Sensor
 F3	In	Traction Sys Current (Unused)
 F4	In	Throttle to Ctrlr 1 (Unused)
-F5	In	Throttle to Ctrlr 2 (Unused)
-F6	In	Throttle Sensor 2
-F7	In	Throttle Sensor 1
+F5	In	Throttle to Ctrlr 2 (Throttle Sensor 1 without RIO)
+F6	In	Throttle Sensor 2 
+F7	In	Throttle Sensor 1 (Unused without RIO)
 */
 
 /* State Color
@@ -142,6 +146,7 @@ void action_fatal();
 
 void reset_drive_sound();
 void reset_precharge_timer();
+void reset_fault_sound();
 void set_led(uint8_t color);
 
 #endif
