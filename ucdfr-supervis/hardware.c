@@ -37,7 +37,7 @@ ISR(TIMER1_COMPA_vect)
 	{
 		if(precharge_time > 0)
 		{
-			PORTD |= (1<<0);	// ON Buzzer
+			//PORTD |= (1<<0);	// ON Buzzer
 			precharge_time--;
 		} // delay contactor
 		else
@@ -254,7 +254,7 @@ void action_charging()
 void action_drive()
 {
 	buzz_now = 1;
-	//PORTB |= (1<<3);	// ON Drive Enable
+	PORTB |= (1<<3);	// ON Drive Enable
 	set_led(GREEN);
 } // action_drive()
 

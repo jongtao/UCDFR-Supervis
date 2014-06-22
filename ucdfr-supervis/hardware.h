@@ -15,7 +15,7 @@
 #define LED_MASK 0x8F	// masks PORTC for leds
 #define BUZZER_MAX 1500	// beep duration
 #define BUZZER_TRIG 50	// toggle beep every x ms
-#define PRECHARGE_MAX 3000	// 5 second precharge
+#define PRECHARGE_MAX 6000	// 6 second precharge
 #define FAULT_MAX 3000
 #define FAULT_TRIG 25
 
@@ -26,17 +26,17 @@
 //#define PEDAL2_END_IN_PEDAL1 5000
 
 // Express pedal 2 in terms of pedal 1
-#define PEDAL_SLOPE_NOMIN 2056L
-#define PEDAL_SLOPE_DENOM 1000L
-#define PEDAL_INTERCEPT -205L
+#define PEDAL_SLOPE_NOMIN 1672//2056L
+#define PEDAL_SLOPE_DENOM 1000//1000L
+#define PEDAL_INTERCEPT 166L
 
 #define PEDAL1_DROPOUT 444 // 414
 #define PEDAL2_DROPOUT 269 // 239
 
-#define PEDAL1_TEN_PERCENT 400
-#define PEDAL1_TWENTYFIVE_PERCENT 1790
+#define PEDAL1_TEN_PERCENT 200//400
+#define PEDAL1_TWENTYFIVE_PERCENT 1025
 #define BRAKE_MIN_MARGIN 575 // calibrate this
-#define PEDAL_MIN_MARGIN 910
+#define PEDAL_MIN_MARGIN 910//765 //910
 
 /*
 // Express controller's throttle as pedal1 travel

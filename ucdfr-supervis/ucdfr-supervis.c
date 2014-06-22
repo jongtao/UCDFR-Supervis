@@ -55,7 +55,7 @@ int main()
 				break;
 			case CHARGING:
 				action_charging();
-				if(event&(1<<CHARGE_DOWN)) state = PRECHARGE;
+				//if(event&(1<<CHARGE_DOWN)) state = PRECHARGE;
 				if(event&(1<<HARD_FAULT_SIG)) state = HARD_FAULT;
 				break;
 			case SOFT_FAULT:
